@@ -100,37 +100,33 @@ def depthFirstSearch(problem:SearchProblem)->List[Direction]:
         INSÉREZ VOTRE SOLUTION À LA QUESTION 1 ICI
     '''
     
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))   
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))   
     
     L = util.Stack()    # Initialisation LIFO
-    L.push((problem.getStartState(), []))   # Ajout du premier état dans la LIFO, comment y aller 
+    L.push((problem.getStartState(), []))   # Ajout du premier état dans la LIFO, comment y aller depuis l'élément d'avant
     visited = [] # La memoire qui permet de retenir ou on est allés pour pas y retourner
     path = []   # Solution finale
         
     while not L.isEmpty():
-    #for i in range (0,10):
-        print("L avant pop", L[0])
-        state, path = L.pop() # Exploration du dernier état et on l'enlevede la LIFO
-        print("state", state)
-        print("L apres pop", L[0])
-        print("solution intermediaire", path)
+        # print("\n******** New round *********\nL avant pop", L.list )
+        state, path = L.pop() # Exploration du dernier état et on l'enleve de la LIFO
+        # print("current state", state)
         
-        # On regarde si on est dans un état final
-        if (problem.isGoalState(state[0]) == True ):
-            print("\nSolution finale: ", path)
+        # On regarde si on est dans un état final. Si oui GAGNEEEEEE
+        if (problem.isGoalState(state) == True ):
+            # print("\nSolution finale: ", path)
             return path
         
+        # Si non : on continue la recherche
         else :
-            visited.append(state)
-            print("visited", visited)
-            # solution.pop()  # On s'était trompés donc on enlève le mouvement de la solution 
+            visited.append(state)   # On ajoute notre état dans la liste des états visités
+            # print("visited", visited)
             for successor, action, _ in problem.getSuccessors(state):
                 if successor not in visited:
-                    L.push((successor, path + [action]))
+                    L.push((successor, path + [action]))    # On ajoute tous les successeurs dans la LIFO
                  
-
     util.raiseNotDefined()
 
 
@@ -141,6 +137,27 @@ def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
     '''
+    # C'est le meme code que pour le DFS mais avec une queue a la place de la stack
+    
+    L = util.Queue()    # Initialisation FIFO
+    L.push((problem.getStartState(), []))   # Ajout du premier état dans la FIFO, comment y aller depuis l'élément d'avant
+    visited = [] # La memoire qui permet de retenir ou on est allés pour pas y retourner
+    path = []   # Solution finale
+        
+    while not L.isEmpty():
+        state, path = L.pop() 
+        
+        # On regarde si on est dans un état final. Si oui GAGNEEEEEE
+        if (problem.isGoalState(state) == True ):
+            # print("\nSolution finale: ", path)
+            return path
+        
+        # Si non : on continue la recherche
+        else :
+            visited.append(state)   # On ajoute notre état dans la liste des états visités
+            for successor, action, _ in problem.getSuccessors(state):
+                if successor not in visited:
+                    L.push((successor, path + [action]))    # On ajoute tous les successeurs dans la FIFO
 
     util.raiseNotDefined()
 

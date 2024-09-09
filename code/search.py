@@ -143,6 +143,8 @@ def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
     L.push((problem.getStartState(), []))   # Ajout du premier état dans la FIFO, comment y aller depuis l'élément d'avant
     visited = [] # La memoire qui permet de retenir ou on est allés pour pas y retourner
     path = []   # Solution finale
+    visited.append(problem.getStartState())   # On ajoute le premier état dans la liste des états visités
+
         
     while not L.isEmpty():
         state, path = L.pop() 
@@ -154,10 +156,11 @@ def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
         
         # Si non : on continue la recherche
         else :
-            visited.append(state)   # On ajoute notre état dans la liste des états visités
+            
             for successor, action, _ in problem.getSuccessors(state):
                 if successor not in visited:
                     L.push((successor, path + [action]))    # On ajoute tous les successeurs dans la FIFO
+                    visited.append(successor)   # On ajoute notre état dans la liste des états visités
 
     util.raiseNotDefined()
 

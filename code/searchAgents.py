@@ -294,6 +294,7 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
+        self.cornerState = [0, 0, 0, 0]     # Ajouter l'état des coin comme ayant une boule (non visité)
 
 
     def getStartState(self):
@@ -305,9 +306,14 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
+        position = self.startingPosition
+        corners = self.cornerState
+        for i in range (4):
+            if (position == self.corners[i]):
+                self.cornerState[i] = 1
+                
+        return (position, corners)
         
-        util.raiseNotDefined()
-
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
@@ -316,9 +322,12 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-
-        util.raiseNotDefined()
-
+            
+        if (state[1] == [1, 1, 1, 1]):
+            return True
+        else :
+            return False
+        
     def getSuccessors(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -342,7 +351,20 @@ class CornersProblem(search.SearchProblem):
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
             '''
-
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]      
+            Newcornerstate = list(state[1])      
+            if (hitsWall == False):
+                
+                if (nextx, nexty) in self.corners:
+                    index = self.corners.index((nextx, nexty))                    
+                    Newcornerstate[index] = 1
+                
+                successors.append((((nextx, nexty), Newcornerstate), action, 1))
+        
+        # print("New successors :", successors)
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -379,8 +401,39 @@ def cornersHeuristic(state, problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
     '''
+    # Récupère la position actuelle de Pacman et l'état des coins (visitée ou non)
+    position_current_state = state[0]  # Position actuelle de Pacman
+    corner_current_state = state[1]  # État des coins (1 = visité, 0 = non visité)
     
-    return 0
+    # Si tous les coins ont été visités, retourner une heuristique de 0
+    if corner_current_state == [1, 1, 1, 1]:
+        return 0
+
+    # Liste des coins non visités
+    unvisited_corners = [corners[i] for i in range(4) if corner_current_state[i] == 0]
+    
+    # Distance totale estimée à accumuler
+    total_distance = 0
+    current_position = position_current_state
+
+    # Tant qu'il reste des coins non visités
+    while unvisited_corners:
+        # Trouver le coin le plus proche selon la distance de Manhattan
+        distances = [abs(current_position[0] - corner[0]) + abs(current_position[1] - corner[1]) for corner in unvisited_corners]
+        min_distance = min(distances)
+        
+        # Ajouter la distance minimale à la distance totale
+        total_distance += min_distance
+        
+        # Mettre à jour la position actuelle pour être le coin le plus proche
+        closest_corner_index = distances.index(min_distance)
+        current_position = unvisited_corners[closest_corner_index]
+        
+        # Retirer ce coin de la liste des coins non visités
+        unvisited_corners.remove(current_position)
+    
+    # Retourner la distance totale estimée
+    return total_distance
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -477,7 +530,22 @@ def foodHeuristic(state, problem: FoodSearchProblem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
     '''
+    
+    
+    # Manhattan 3/5 - 9444 etats visites
+    
+    # Convertir le foodGrid en une liste de coordonnées de nourriture restantes
+    foodList = foodGrid.asList()
+    problem.heuristicInfo['wallCount'] = problem.walls.count()
+    
+    # Si aucune nourriture n'est restante, retourner 0 (objectif atteint)
+    if not foodList:
+        return 0
 
+    # Calculer la distance de Manhattan entre Pacman et chaque point de nourriture
+    distances = [abs(position[0] - food[0]) + abs(position[1] - food[1]) for food in foodList]
 
-    return 0
+    # Retourner la distance maximale à un point de nourriture (le plus éloigné)
+    return max(distances)
+
 

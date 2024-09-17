@@ -204,7 +204,26 @@ def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic)->List[Direction]
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
     '''
+    L = util.PriorityQueue() #Initialisation Priority Queue
+    L.push((problem.getStartState(), [], 0),  0)
+    visited = []
+    path = []
+    visited.append(problem.getStartState())   # On ajoute le premier état dans la liste des états visités
+    
 
+    while not L.isEmpty():
+        state, path, cost = L.pop()
+        
+        if (problem.isGoalState(state)==True):
+            return path
+        else : 
+            
+            for successor, action, cost_tr in problem.getSuccessors(state):
+                
+                if (successor not in visited) or problem.isGoalState(successor)==True:                         
+                    L.update((successor, path + [action], cost + cost_tr ), cost + cost_tr + heuristic(successor, problem))
+                    visited.append(successor)
+                    
     util.raiseNotDefined()
 
 

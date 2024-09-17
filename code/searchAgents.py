@@ -530,22 +530,72 @@ def foodHeuristic(state, problem: FoodSearchProblem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
     '''
-    
-    
-    # Manhattan 3/5 - 9444 etats visites
-    
-    # Convertir le foodGrid en une liste de coordonnées de nourriture restantes
     foodList = foodGrid.asList()
-    problem.heuristicInfo['wallCount'] = problem.walls.count()
-    
-    # Si aucune nourriture n'est restante, retourner 0 (objectif atteint)
+
+    # Si aucune nourriture n'est restante, retourner 0
     if not foodList:
         return 0
 
-    # Calculer la distance de Manhattan entre Pacman et chaque point de nourriture
-    distances = [abs(position[0] - food[0]) + abs(position[1] - food[1]) for food in foodList]
+    walls = problem.walls
 
-    # Retourner la distance maximale à un point de nourriture (le plus éloigné)
-    return max(distances)
+    # Fonction interne pour effectuer un BFS
+    def bfs(start, goal):
+        """
+        Réaliser une BFS pour trouver la distance entre la position actuelle et la nourriture en incluant les obstacles
+        """
+        L = util.Queue()
+        L.push((start, 0))  # (position, distance)
+        visited = set()
+        visited.add(start)
+
+        while not L.isEmpty():
+            currentPosition, currentDistance = L.pop()
+
+            if currentPosition == goal:
+                return currentDistance
+
+            # Etude des positions autours
+            for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+                nextPosition = (currentPosition[0] + dx, currentPosition[1] + dy)
+                if nextPosition not in visited and not walls[nextPosition[0]][nextPosition[1]]:
+                    visited.add(nextPosition)
+                    L.push((nextPosition, currentDistance + 1))
+
+        return util.raiseNotDefined() 
+
+    # Trouver le point de nourriture le plus éloigné de Pacman via BFS
+    maxBFSdistance = 0
+    farthestFood = None
+
+    for food in foodList:
+        bfsDistance = bfs(position, food)  # Utiliser BFS pour calculer la distance réelle
+        if bfsDistance > maxBFSdistance:
+            maxBFSdistance = bfsDistance
+            farthestFood = food
+
+    # # Ajouter une estimation supplémentaire avec la distance de Manhattan entre les points de nourriture restants -> pas admissible ?
+    # if farthestFood:
+    #     remainingFoods = [food for food in foodList if food != farthestFood]
+    #     if remainingFoods:
+    #         manhattanDistances = [abs(farthestFood[0] - food[0]) + abs(farthestFood[1] - food[1]) for food in remainingFoods]
+    #         maxBFSdistance += min(manhattanDistances)  # Ajouter l'estimation minimale avec Manhattan
+
+    return maxBFSdistance
+    
+    # Manhattan 3/5 - 9444 etats visites
+    
+    # # Convertir le foodGrid en une liste de coordonnées de nourriture restantes
+    # foodList = foodGrid.asList()
+    # problem.heuristicInfo['wallCount'] = problem.walls.count()
+    
+    # # Si aucune nourriture n'est restante, retourner 0 (objectif atteint)
+    # if not foodList:
+    #     return 0
+
+    # # Calculer la distance de Manhattan entre Pacman et chaque point de nourriture
+    # distances = [abs(position[0] - food[0]) + abs(position[1] - food[1]) for food in foodList]
+
+    # # Retourner la distance maximale à un point de nourriture (le plus éloigné)
+    # return max(distances)
 
 

@@ -294,7 +294,7 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        self.cornerState = [0, 0, 0, 0]     # Ajouter l'état des coin comme ayant une boule (non visité)
+        self.cornerState = [0, 0, 0, 0]     # Ajouter l'état des coin comme ayant une boule (0 = non visité)
 
 
     def getStartState(self):
@@ -308,6 +308,8 @@ class CornersProblem(search.SearchProblem):
         '''
         position = self.startingPosition
         corners = self.cornerState
+        
+        # Cas ou on se trouve sur un coin dès le début
         for i in range (4):
             if (position == self.corners[i]):
                 self.cornerState[i] = 1
@@ -322,7 +324,7 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-            
+        # L'état final = quand toutes les boules ont étés mangées
         if (state[1] == [1, 1, 1, 1]):
             return True
         else :
@@ -356,16 +358,15 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]      
             Newcornerstate = list(state[1])      
+            # Si le successeur est valide (ie. n'est pas un mur)
             if (hitsWall == False):
-                
+                # Si c'est une boule
                 if (nextx, nexty) in self.corners:
                     index = self.corners.index((nextx, nexty))                    
                     Newcornerstate[index] = 1
                 
                 successors.append((((nextx, nexty), Newcornerstate), action, 1))
         
-        # print("New successors :", successors)
-
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -400,6 +401,7 @@ def cornersHeuristic(state, problem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
+        --> on utilise la distance de Manhatan qui est non triviale, admissible et consistante
     '''
     # Récupère la position actuelle de Pacman et l'état des coins (visitée ou non)
     position_current_state = state[0]  # Position actuelle de Pacman
@@ -529,6 +531,11 @@ def foodHeuristic(state, problem: FoodSearchProblem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
+        --> Notre solution 1 fut une distance de Manhatan mais c'est une heuristique peut efficace qui nous a amené
+        a explorer beaucoup d'états (score 3/5)
+        --> Solution 2 : exploiter la connaissance des murs pour affiner l'heursitique. Nous avons implémentés au seins de notre 
+        heuristique un bfs de manière à prendre en compte les murs. Commes les bfs s'effectuent entre pacman et u seul point (et non
+        tout le problème) c'est forcément admissible.
     '''
     foodList = foodGrid.asList()
 
@@ -565,37 +572,12 @@ def foodHeuristic(state, problem: FoodSearchProblem):
 
     # Trouver le point de nourriture le plus éloigné de Pacman via BFS
     maxBFSdistance = 0
-    farthestFood = None
 
     for food in foodList:
         bfsDistance = bfs(position, food)  # Utiliser BFS pour calculer la distance réelle
         if bfsDistance > maxBFSdistance:
+            # On ne récupère que la distance maximale pour notre heuristique
             maxBFSdistance = bfsDistance
-            farthestFood = food
-
-    # # Ajouter une estimation supplémentaire avec la distance de Manhattan entre les points de nourriture restants -> pas admissible ?
-    # if farthestFood:
-    #     remainingFoods = [food for food in foodList if food != farthestFood]
-    #     if remainingFoods:
-    #         manhattanDistances = [abs(farthestFood[0] - food[0]) + abs(farthestFood[1] - food[1]) for food in remainingFoods]
-    #         maxBFSdistance += min(manhattanDistances)  # Ajouter l'estimation minimale avec Manhattan
 
     return maxBFSdistance
-    
-    # Manhattan 3/5 - 9444 etats visites
-    
-    # # Convertir le foodGrid en une liste de coordonnées de nourriture restantes
-    # foodList = foodGrid.asList()
-    # problem.heuristicInfo['wallCount'] = problem.walls.count()
-    
-    # # Si aucune nourriture n'est restante, retourner 0 (objectif atteint)
-    # if not foodList:
-    #     return 0
-
-    # # Calculer la distance de Manhattan entre Pacman et chaque point de nourriture
-    # distances = [abs(position[0] - food[0]) + abs(position[1] - food[1]) for food in foodList]
-
-    # # Retourner la distance maximale à un point de nourriture (le plus éloigné)
-    # return max(distances)
-
 

@@ -98,6 +98,7 @@ def depthFirstSearch(problem:SearchProblem)->List[Direction]:
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 1 ICI
+        --> Les print de debuggages ont étés laissés pour cette question
     '''
     
     # print("Start:", problem.getStartState())
@@ -136,8 +137,10 @@ def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
+        --> Globalement, c'est le meme code que pour le DFS mais 
+        avec une queue à la place de la stack et une gestion des états mémorisée légèrement différente
+
     '''
-    # C'est le meme code que pour le DFS mais avec une queue a la place de la stack
     
     L = util.Queue()    # Initialisation FIFO
     L.push((problem.getStartState(), []))   # Ajout du premier état dans la FIFO, comment y aller depuis l'élément d'avant
@@ -151,7 +154,6 @@ def breadthFirstSearch(problem:SearchProblem)->List[Direction]:
         
         # On regarde si on est dans un état final. Si oui GAGNEEEEEE
         if (problem.isGoalState(state) == True ):
-            # print("\nSolution finale: ", path)
             return path
         
         # Si non : on continue la recherche
@@ -170,6 +172,7 @@ def uniformCostSearch(problem:SearchProblem)->List[Direction]:
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 3 ICI
+        --> Ici, prise en compte des coups d'actions
     '''
     L = util.PriorityQueue() #Initialisation Priority Queue
     L.push((problem.getStartState(), [], 0),  0)
@@ -203,6 +206,7 @@ def aStarSearch(problem:SearchProblem, heuristic=nullHeuristic)->List[Direction]
     """Search the node that has the lowest combined cost and heuristic first."""
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
+        --> Même code que le UCS mais ou on ajoute l'heuristique pour le choix de l'état suivant à étendre
     '''
     L = util.PriorityQueue() #Initialisation Priority Queue
     L.push((problem.getStartState(), [], 0),  0)

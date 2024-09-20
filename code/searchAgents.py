@@ -11,6 +11,12 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+"""
+Devoir 1 Automne 2024:
+students : Romain duchadeau - 2311547
+           Ines Lopez - 2404168
+"""
+
 
 """
 This file contains all of the agents that can be selected to control Pacman.  To
@@ -360,7 +366,7 @@ class CornersProblem(search.SearchProblem):
             Newcornerstate = list(state[1])      
             # Si le successeur est valide (ie. n'est pas un mur)
             if (hitsWall == False):
-                # Si c'est une boule
+                # Si c'est une boule mise a jour de l'état pour transmttre l'information
                 if (nextx, nexty) in self.corners:
                     index = self.corners.index((nextx, nexty))                    
                     Newcornerstate[index] = 1
@@ -401,7 +407,7 @@ def cornersHeuristic(state, problem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
-        --> on utilise la distance de Manhatan qui est non triviale, admissible et consistante
+        --> on utilise la distance de Manhatan qui est non triviale, admissible et consistante (cf. cours)
     '''
     # Récupère la position actuelle de Pacman et l'état des coins (visitée ou non)
     position_current_state = state[0]  # Position actuelle de Pacman
@@ -535,7 +541,7 @@ def foodHeuristic(state, problem: FoodSearchProblem):
         a explorer beaucoup d'états (score 3/5)
         --> Solution 2 : exploiter la connaissance des murs pour affiner l'heursitique. Nous avons implémentés au seins de notre 
         heuristique un bfs de manière à prendre en compte les murs. Commes les bfs s'effectuent entre pacman et u seul point (et non
-        tout le problème) c'est forcément admissible.
+        tout le problème) c'est forcément admissible et peu couteux.
     '''
     foodList = foodGrid.asList()
 
@@ -570,8 +576,8 @@ def foodHeuristic(state, problem: FoodSearchProblem):
 
         return util.raiseNotDefined() 
 
-    # Trouver le point de nourriture le plus éloigné de Pacman via BFS
-    maxBFSdistance = 0
+    #### Trouver le point de nourriture le plus éloigné de Pacman via BFS
+    maxBFSdistance = 0  # Initialisation variable de distance
 
     for food in foodList:
         bfsDistance = bfs(position, food)  # Utiliser BFS pour calculer la distance réelle

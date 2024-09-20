@@ -11,6 +11,11 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+"""
+Devoir 1 Automne 2024:
+students : Romain duchadeau - 2311547
+           Ines Lopez - 2404168
+"""
 
 """
 In search.py, you will implement generic search algorithms which are called by
